@@ -4,6 +4,7 @@
 #include "debug/debug.h"
 #include "secrets.h"
 #include "timekeeping/TimekeepingModule.h"
+#include "output/OutputModule.h"
 
 TimekeepingModule timekeeping;
 
@@ -11,6 +12,7 @@ void setup() {
   Serial.begin(115200);
   Wire.begin();
   BlinkingLight::Initialize();
+  OutputModule::Initialize();
   timekeeping.begin();
 
   delay(1000);
@@ -21,5 +23,11 @@ void setup() {
 
 void loop() {
   timekeeping.update();
-  delay(1000);
+
+  auto now = timekeeping.now();
+  if (now.isValid()) {
+    OutputModule::Update(now);
+  }
+
+  delay(250);
 }

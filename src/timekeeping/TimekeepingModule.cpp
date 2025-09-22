@@ -26,6 +26,14 @@ void TimekeepingModule::update() {
   }
 }
 
+DateTime TimekeepingModule::now() {
+  if (timeInitialized) {
+    return rtc.now();
+  } else {
+    return DateTime();
+  }
+}
+
 bool TimekeepingModule::setSystemTimeFromRTC() {
   DateTime now = rtc.now();
 
@@ -44,7 +52,7 @@ bool TimekeepingModule::setSystemTimeFromRTC() {
   Serial.println(&timeinfo, "Current time: %Y-%m-%d %H:%M:%S");
 
   timeInitialized = true;
-  BlinkingLight::Flash();
+  BlinkingLight::Toggle(true);
   return true;
 }
 
@@ -65,6 +73,6 @@ bool TimekeepingModule::setRTCFromNTP() {
   Serial.println(&timeinfo, "Current time: %Y-%m-%d %H:%M:%S");
 
   timeInitialized = true;
-  BlinkingLight::Flash();
+  BlinkingLight::Toggle(true);
   return true;
 }

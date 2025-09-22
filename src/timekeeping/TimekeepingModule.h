@@ -5,8 +5,9 @@ class TimekeepingModule {
 public:
     TimekeepingModule() = default;
 
-    bool begin();  // New method for initialization
+    bool begin();
     void update();
+    DateTime now();
 
 private:
     bool setSystemTimeFromRTC();

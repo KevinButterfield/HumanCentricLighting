@@ -1,9 +1,19 @@
 #include <Arduino.h>
 
 const int LED_PIN = 2;
+bool ledState = false;
 
 void BlinkingLight::Initialize() { 
     pinMode(LED_PIN, OUTPUT); 
+}
+
+void BlinkingLight::Toggle(bool state) {
+  ledState = state;
+  digitalWrite(LED_PIN, ledState ? HIGH : LOW);
+}
+
+void BlinkingLight::Toggle() {
+  BlinkingLight::Toggle(!ledState);
 }
 
 void BlinkingLight::Flash() {
@@ -13,4 +23,5 @@ void BlinkingLight::Flash() {
     digitalWrite(LED_PIN, LOW);
     delay(100);
   }
+  digitalWrite(LED_PIN, ledState ? HIGH : LOW);
 }
