@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <WiFi.h>
+
+#include "debug/debug.h"
 #include "secrets.h"
 #include "timekeeping/TimekeepingModule.h"
-#include "debug/debug.h"
 
 TimekeepingModule timekeeping;
 
