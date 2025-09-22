@@ -2,14 +2,15 @@
 #include <WiFi.h>
 #include "secrets.h"
 #include "timekeeping/TimekeepingModule.h"
-
-const int LED_PIN = 2;
+#include "debug/debug.h"
 
 TimekeepingModule timekeeping;
 
 void setup() {
   Serial.begin(115200);
+  Wire.begin();
   BlinkingLight::Initialize();
+  timekeeping.begin();
 
   delay(1000);
 
@@ -19,6 +20,5 @@ void setup() {
 
 void loop() {
   timekeeping.update();
-
   delay(1000);
 }
