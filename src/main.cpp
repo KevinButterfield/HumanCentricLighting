@@ -6,7 +6,7 @@ const int LED_PIN = 2;
 
 void setup() {
   Serial.begin(115200);
-  pinMode(LED_PIN, OUTPUT);
+  BlinkingLight::Initialize();
 
   delay(1000);
 
@@ -22,15 +22,14 @@ void setup() {
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  for (int i = 0; i < 5; i++) {
-    digitalWrite(LED_PIN, HIGH);
-    delay(100);
-    digitalWrite(LED_PIN, LOW);
-    delay(100);
-  }
+  BlinkingLight::Flash();
 
   digitalWrite(LED_PIN, HIGH);
 }
 
 void loop() {
+  time_t now = time(nullptr);
+  Serial.print("Current time: ");
+  Serial.println(ctime(&now));
+  delay(2000);
 }
