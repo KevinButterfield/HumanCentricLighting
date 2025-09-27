@@ -1,6 +1,7 @@
 #include "OutputModule.h"
 
 #include <Arduino.h>
+#include <ArduinoLog.h>
 #include <RTClib.h>
 
 const int WARM_CHANNEL = 0;
@@ -20,7 +21,7 @@ void OutputModule::Initialize() {
 }
 
 void OutputModule::Update(const int warm, const int cool) {
-  Serial.printf("Setting LED duty cycles: warm to %d, cool to %d\n", warm, cool);
+  Log.verboseln(F("PWM update - Warm: %d, Cool: %d"), warm, cool);
   ledcWrite(WARM_CHANNEL, warm);
   ledcWrite(COOL_CHANNEL, cool);
 }

@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include <WiFi.h>
+#include <ArduinoLog.h>
 
 const char* const TZ_INFO = "EST5EDT,M3.2.0,M11.1.0";
 
@@ -9,9 +10,9 @@ bool TimekeepingModule::begin() {
   this->rtcConnected = rtc.begin();
 
   if (!this->rtcConnected) {
-    Serial.println("Couldn't find RTC");
+    Log.warningln(F("RTC not found - check connections"));
   } else if (rtc.lostPower()) {
-    Serial.println("RTC lost power, falling back to WiFi");
+    Log.warningln(F("RTC lost power, falling back to WiFi time"));
   } else {
     setSystemTimeFromRTC();
   }
@@ -42,7 +43,7 @@ void TimekeepingModule::update() {
 
 void TimekeepingModule::startWifiTimeSyncIfConnected() {
   if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("Starting time sync from wifi...");
+    Log.noticeln(F("Starting NTP time sync..."));
     configTzTime(TZ_INFO, "pool.ntp.org", "time.nist.gov");
     timeState = TIME_PENDING;
   }
@@ -51,12 +52,15 @@ void TimekeepingModule::startWifiTimeSyncIfConnected() {
 void TimekeepingModule::syncRTCIfWifiSyncComplete() {
   struct tm timeinfo;
   if (getLocalTime(&timeinfo)) {
-    Serial.println(&timeinfo, "Current time from WiFi: %Y-%m-%d %H:%M:%S");
+    Log.noticeln(F("NTP time received: %d-%d-%d %d:%d:%d"),
+               timeinfo.tm_year + 1900, timeinfo.tm_mon + 1, timeinfo.tm_mday,
+               timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
 
     if (rtcConnected) {
       time_t now;
       time(&now);
       rtc.adjust(DateTime(now));
+      Log.noticeln(F("RTC synchronized with NTP time"));
     }
 
     timeState = TIME_SET;
@@ -79,7 +83,9 @@ bool TimekeepingModule::setSystemTimeFromRTC() {
   struct timeval tv = {.tv_sec = t};
   settimeofday(&tv, NULL);
 
-  Serial.println(&timeinfo, "Current time from RTC: %Y-%m-%d %H:%M:%S");
+  Log.noticeln(F("RTC time set: %d-%d-%d %d:%d:%d"),
+             timeinfo.tm_year + 1900, timeinfo.tm_mon + 1, timeinfo.tm_mday,
+             timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
 
   timeState = TIME_SET;
   BlinkingLight::Toggle(true);
