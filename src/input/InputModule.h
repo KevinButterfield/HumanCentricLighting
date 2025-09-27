@@ -1,4 +1,5 @@
 namespace InputModule {
     void Initialize();
-    int ReadPotentiometer();
+    int WarmValue();
+    int CoolValue();
 }

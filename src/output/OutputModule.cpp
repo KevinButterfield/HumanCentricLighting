@@ -5,16 +5,22 @@
 
 const int WARM_CHANNEL = 0;
 const int WARM_PIN = 25;
+
 const int COOL_CHANNEL = 1;
 const int COOL_PIN = 26;
 
+const int RESOLUTION_BITS = 12;
+const int FREQUENCY_HZ = 5000;
+
 void OutputModule::Initialize() {
-  ledcSetup(WARM_CHANNEL, 5000, 12);  // Channel 0, 5kHz, 12-bit resolution
+  ledcSetup(WARM_CHANNEL, FREQUENCY_HZ, RESOLUTION_BITS);
+  ledcSetup(COOL_CHANNEL, FREQUENCY_HZ, RESOLUTION_BITS);
   ledcAttachPin(WARM_PIN, WARM_CHANNEL);
-  pinMode(COOL_PIN, OUTPUT);  // Keep cool pin simple for now
+  ledcAttachPin(COOL_PIN, COOL_CHANNEL);
 }
 
-void OutputModule::Update(const int value) {
-  Serial.printf("Setting warm LED duty cycle to %d (out of 4095)\n", value);
-  ledcWrite(WARM_CHANNEL, value);
+void OutputModule::Update(const int warm, const int cool) {
+  Serial.printf("Setting LED duty cycles: warm to %d, cool to %d\n", warm, cool);
+  ledcWrite(WARM_CHANNEL, warm);
+  ledcWrite(COOL_CHANNEL, cool);
 }

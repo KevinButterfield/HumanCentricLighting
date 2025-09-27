@@ -1,15 +1,18 @@
 #include "InputModule.h"
 #include <Arduino.h>
 
-const int POTENTIOMETER_PIN = 34;
+const int WARM_INPUT_PIN = 34;
+const int COOL_INPUT_PIN = 35;
 
 void InputModule::Initialize() {
-  pinMode(POTENTIOMETER_PIN, INPUT);
+  pinMode(WARM_INPUT_PIN, INPUT);
+  pinMode(COOL_INPUT_PIN, INPUT);
 }
 
-int InputModule::ReadPotentiometer() {
-  int value = analogRead(POTENTIOMETER_PIN);
-  Serial.printf("Potentiometer value: %d\n", value);
+int InputModule::WarmValue() {
+  return analogRead(WARM_INPUT_PIN);
+}
 
-  return value; // 0-4095
+int InputModule::CoolValue() {
+  return analogRead(COOL_INPUT_PIN);
 }

@@ -25,8 +25,7 @@ void setup() {
 void loop() {
   timekeeping.update();
 
-
-  OutputModule::Update(InputModule::ReadPotentiometer());
+  OutputModule::Update(InputModule::WarmValue(), InputModule::CoolValue());
 
   delay(250);
 }

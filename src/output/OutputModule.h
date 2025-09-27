@@ -2,5 +2,5 @@
 
 namespace OutputModule {
     void Initialize();
-    void Update(const int value); // 0-4095
+    void Update(const int warm, const int cool);
 }
