@@ -6,12 +6,11 @@
 const char* const TZ_INFO = "EST5EDT,M3.2.0,M11.1.0";
 
 bool TimekeepingModule::begin() {
-  if (!rtc.begin()) {
-    Serial.println("Couldn't find RTC");
-    return false;
-  }
+  this->rtcConnected = rtc.begin();
 
-  if (rtc.lostPower()) {
+  if (!this->rtcConnected) {
+    Serial.println("Couldn't find RTC");
+  } else if (rtc.lostPower()) {
     Serial.println("RTC lost power, falling back to WiFi");
   } else {
     setSystemTimeFromRTC();
@@ -27,7 +26,7 @@ void TimekeepingModule::update() {
 }
 
 DateTime TimekeepingModule::now() {
-  if (timeInitialized) {
+  if (timeInitialized && rtcConnected) {
     return rtc.now();
   } else {
     return DateTime();
@@ -63,14 +62,17 @@ bool TimekeepingModule::setRTCFromNTP() {
   struct tm timeinfo;
   while (!getLocalTime(&timeinfo)) {
     Serial.println("Waiting for NTP time sync...");
-    delay(500);
+    delay(500);  // TODO: make this async
   }
 
   time_t now;
   time(&now);
-  rtc.adjust(DateTime(now));
-  Serial.println("RTC synchronized with NTP time");
-  Serial.println(&timeinfo, "Current time: %Y-%m-%d %H:%M:%S");
+  Serial.println(&timeinfo, "Current time from NTP: %Y-%m-%d %H:%M:%S");
+
+  if (rtcConnected) {
+    Serial.println("RTC synchronized with NTP time");
+    rtc.adjust(DateTime(now));
+  }
 
   timeInitialized = true;
   BlinkingLight::Toggle(true);

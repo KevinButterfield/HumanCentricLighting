@@ -15,4 +15,5 @@ private:
 
     RTC_DS3231 rtc;
     bool timeInitialized = false;
+    bool rtcConnected = false; 
 };

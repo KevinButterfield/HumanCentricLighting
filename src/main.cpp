@@ -4,14 +4,15 @@
 #include "debug/debug.h"
 #include "secrets.h"
 #include "timekeeping/TimekeepingModule.h"
+#include "input/InputModule.h"
 #include "output/OutputModule.h"
 
 TimekeepingModule timekeeping;
 
 void setup() {
   Serial.begin(115200);
-  Wire.begin();
   BlinkingLight::Initialize();
+  InputModule::Initialize();
   OutputModule::Initialize();
   timekeeping.begin();
 
@@ -25,9 +26,11 @@ void loop() {
   timekeeping.update();
 
   auto now = timekeeping.now();
-  if (now.isValid()) {
+  if (false && now.isValid()) {
     OutputModule::Update(now);
   }
+
+  InputModule::ReadPotentiometer();
 
   delay(250);
 }
