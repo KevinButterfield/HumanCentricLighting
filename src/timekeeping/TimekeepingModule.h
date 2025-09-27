@@ -10,10 +10,13 @@ public:
     DateTime now();
 
 private:
+    enum TimeState { TIME_NONE, TIME_PENDING, TIME_SET };
+
+    void startWifiTimeSyncIfConnected();
+    void syncRTCIfWifiSyncComplete();
     bool setSystemTimeFromRTC();
-    bool setRTCFromNTP();
 
     RTC_DS3231 rtc;
-    bool timeInitialized = false;
+    TimeState timeState = TIME_NONE;
     bool rtcConnected = false; 
 };

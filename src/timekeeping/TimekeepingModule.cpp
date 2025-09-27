@@ -19,17 +19,48 @@ bool TimekeepingModule::begin() {
   return true;
 }
 
+DateTime TimekeepingModule::now() {
+  time_t now;
+  time(&now);
+  return DateTime(now);
+}
+
 void TimekeepingModule::update() {
-  if (!timeInitialized && WiFi.status() == WL_CONNECTED) {
-    setRTCFromNTP();
+  switch (timeState) {
+    case TIME_NONE:
+      startWifiTimeSyncIfConnected();
+      break;
+    case TIME_PENDING: {
+      syncRTCIfWifiSyncComplete();
+      break;
+    case TIME_SET:
+      // Nothing to do
+      break;
+    }
   }
 }
 
-DateTime TimekeepingModule::now() {
-  if (timeInitialized && rtcConnected) {
-    return rtc.now();
-  } else {
-    return DateTime();
+void TimekeepingModule::startWifiTimeSyncIfConnected() {
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("Starting time sync from wifi...");
+    configTzTime(TZ_INFO, "pool.ntp.org", "time.nist.gov");
+    timeState = TIME_PENDING;
+  }
+}
+
+void TimekeepingModule::syncRTCIfWifiSyncComplete() {
+  struct tm timeinfo;
+  if (getLocalTime(&timeinfo)) {
+    Serial.println(&timeinfo, "Current time from WiFi: %Y-%m-%d %H:%M:%S");
+
+    if (rtcConnected) {
+      time_t now;
+      time(&now);
+      rtc.adjust(DateTime(now));
+    }
+
+    timeState = TIME_SET;
+    BlinkingLight::Toggle(true);
   }
 }
 
@@ -48,33 +79,9 @@ bool TimekeepingModule::setSystemTimeFromRTC() {
   struct timeval tv = {.tv_sec = t};
   settimeofday(&tv, NULL);
 
-  Serial.println(&timeinfo, "Current time: %Y-%m-%d %H:%M:%S");
+  Serial.println(&timeinfo, "Current time from RTC: %Y-%m-%d %H:%M:%S");
 
-  timeInitialized = true;
-  BlinkingLight::Toggle(true);
-  return true;
-}
-
-bool TimekeepingModule::setRTCFromNTP() {
-  Serial.println("Starting time sync...");
-  configTzTime(TZ_INFO, "pool.ntp.org", "time.nist.gov");
-
-  struct tm timeinfo;
-  while (!getLocalTime(&timeinfo)) {
-    Serial.println("Waiting for NTP time sync...");
-    delay(500);  // TODO: make this async
-  }
-
-  time_t now;
-  time(&now);
-  Serial.println(&timeinfo, "Current time from NTP: %Y-%m-%d %H:%M:%S");
-
-  if (rtcConnected) {
-    Serial.println("RTC synchronized with NTP time");
-    rtc.adjust(DateTime(now));
-  }
-
-  timeInitialized = true;
+  timeState = TIME_SET;
   BlinkingLight::Toggle(true);
   return true;
 }
