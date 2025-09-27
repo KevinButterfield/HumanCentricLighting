@@ -25,12 +25,8 @@ void setup() {
 void loop() {
   timekeeping.update();
 
-  auto now = timekeeping.now();
-  if (false && now.isValid()) {
-    OutputModule::Update(now);
-  }
 
-  InputModule::ReadPotentiometer();
+  OutputModule::Update(InputModule::ReadPotentiometer());
 
   delay(250);
 }

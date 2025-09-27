@@ -7,7 +7,9 @@ void InputModule::Initialize() {
   pinMode(POTENTIOMETER_PIN, INPUT);
 }
 
-void InputModule::ReadPotentiometer() {
+int InputModule::ReadPotentiometer() {
   int value = analogRead(POTENTIOMETER_PIN);
   Serial.printf("Potentiometer value: %d\n", value);
+
+  return value; // 0-4095
 }

@@ -2,5 +2,5 @@
 
 namespace OutputModule {
     void Initialize();
-    void Update(const DateTime& now);
+    void Update(const int value); // 0-4095
 }
