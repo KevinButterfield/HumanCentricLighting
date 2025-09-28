@@ -9,10 +9,9 @@ void InputModule::Initialize() {
   pinMode(COOL_INPUT_PIN, INPUT);
 }
 
-int InputModule::WarmValue() {
-  return analogRead(WARM_INPUT_PIN);
-}
-
-int InputModule::CoolValue() {
-  return analogRead(COOL_INPUT_PIN);
+Light InputModule::LightValues() {
+  Light light;
+  light.warm = analogRead(WARM_INPUT_PIN);
+  light.cool = analogRead(COOL_INPUT_PIN);
+  return light;
 }

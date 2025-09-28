@@ -1,5 +1,7 @@
+#pragma once
+#include <output/OutputModule.h>
+
 namespace InputModule {
     void Initialize();
-    int WarmValue();
-    int CoolValue();
+    Light LightValues();
 }

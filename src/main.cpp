@@ -25,7 +25,7 @@ void setup() {
 void loop() {
   timekeeping.update();
 
-  OutputModule::Update(InputModule::WarmValue(), InputModule::CoolValue());
+  OutputModule::Update(InputModule::LightValues());
 
   delay(250);
 }

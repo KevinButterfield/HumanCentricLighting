@@ -1,3 +1,5 @@
+#pragma once
+
 namespace BlinkingLight {
     void Initialize();
     void Flash();

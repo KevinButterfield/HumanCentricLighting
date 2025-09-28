@@ -20,8 +20,8 @@ void OutputModule::Initialize() {
   ledcAttachPin(COOL_PIN, COOL_CHANNEL);
 }
 
-void OutputModule::Update(const int warm, const int cool) {
-  Log.verboseln(F("PWM update - Warm: %d, Cool: %d"), warm, cool);
-  ledcWrite(WARM_CHANNEL, warm);
-  ledcWrite(COOL_CHANNEL, cool);
+void OutputModule::Update(const Light& light) {
+  Log.verboseln(F("PWM update - Warm: %d, Cool: %d"), light.warm, light.cool);
+  ledcWrite(WARM_CHANNEL, light.warm);
+  ledcWrite(COOL_CHANNEL, light.cool);
 }
