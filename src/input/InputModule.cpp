@@ -9,7 +9,7 @@ void InputModule::Initialize() {
   pinMode(BRIGHTNESS_PIN, INPUT);
 }
 
-Light InputModule::LightValues() {
+Light LightFromPotentiometers() {
   Light light;
   int colorTemp = analogRead(COLOR_TEMP_PIN);    // 0-4095 range on ESP32
   int brightness = analogRead(BRIGHTNESS_PIN);    // 0-4095 range on ESP32
@@ -22,4 +22,9 @@ Light InputModule::LightValues() {
   light.cool = ratio * brightness;
   
   return light;
+}
+
+
+Light InputModule::LightValues() {
+  return LightFromPotentiometers();
 }
