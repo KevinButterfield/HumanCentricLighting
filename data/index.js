@@ -6,7 +6,19 @@ const exampleData = [
   { x: 0.667, y: 3500 },
   { x: 0.833, y: 3000 },
   { x: 1.0, y: 2700 },
-]
+];
+
+const sunrise = 8;
+const sunset = 20;
+
+function renderTime(index) {
+  const fractionOfSolarDay = exampleData[index].x
+  const time = sunrise + (sunset - sunrise) * fractionOfSolarDay;
+  console.log({ time })
+
+  const percent = Math.round(fractionOfSolarDay * 100);
+  return percent + '%';
+}
 
 function renderChart() {
   const chartCanvas = document.getElementById('chart');
@@ -25,12 +37,17 @@ function renderChart() {
     options: {
       layout: {
         padding: {
-          top: 50,
+          top: 40,
+          left: 20,
+          right: 20,
           bottom: 10,
         }
       },
       scales: {
         x: {
+          ticks: {
+            callback: renderTime,
+          }
         },
         y: {
           ticks: {
@@ -48,7 +65,7 @@ function renderChart() {
           enabled: false,
         },
         datalabels: {
-          display: (context) => context.dataIndex > 0 && context.dataIndex < context.dataset.data.length - 1,
+          // display: (context) => context.dataIndex > 0 && context.dataIndex < context.dataset.data.length - 1,
           formatter: (value) => Math.round(value.y) + 'K',
           align: 'top',
           anchor: 'end',
