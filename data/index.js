@@ -1,6 +1,10 @@
 const exampleData = [
   { x: 0.0, y: 2700 },
-  { x: 0.5, y: 6500 },
+  { x: 0.167, y: 4000 },
+  { x: 0.333, y: 6500 },
+  { x: 0.5, y: 4500 },
+  { x: 0.667, y: 3500 },
+  { x: 0.833, y: 3000 },
   { x: 1.0, y: 2700 },
 ]
 
@@ -13,9 +17,9 @@ function renderChart() {
     data: {
       labels: exampleData.map(d => d.x),
       datasets: [{
-        label: 'My First Dataset',
         data: exampleData,
         tension: 0.4,
+        pointHitRadius: 25,
       }]
     },
     options: {
