@@ -1,3 +1,4 @@
+#include "BlinkingLight.h"
 #include <Arduino.h>
 
 const int LED_PIN = 2;

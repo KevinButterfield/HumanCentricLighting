@@ -3,7 +3,7 @@
 #include <WiFi.h>
 
 #include "secrets.h"
-#include "debug/debug.h"
+#include "custom_debug_utils/BlinkingLight.h"
 #include "input/ManualInputModule.h"
 #include "input/TimeInputModule.h"
 #include "output/OutputModule.h"
