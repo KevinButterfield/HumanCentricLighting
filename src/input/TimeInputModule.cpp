@@ -115,4 +115,6 @@ Keyframe TimeInputModule::CurrentKeyframe(float fractionOfSolarDay) {
   }
 }
 
-Keyframe* TimeInputModule::CurrentKeyframes() { return currentKeyframes; }
+std::vector<Keyframe> TimeInputModule::CurrentKeyframes() { 
+  return std::vector<Keyframe>(currentKeyframes, currentKeyframes + KEYFRAME_COUNT);
+}

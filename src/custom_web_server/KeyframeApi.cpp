@@ -4,18 +4,17 @@
 #include <input/TimeInputModule.h>
 
 void CustomWebServer::GetKeyframes(AsyncWebServerRequest* request) {
-  auto keyframes = TimeInputModule::CurrentKeyframes();
-  JsonDocument outputKeyframes;
+  JsonDocument json;
 
-  for(int i = 0; i < KEYFRAME_COUNT; i++) {
-    JsonObject keyframe = outputKeyframes.add<JsonObject>();
-    keyframe[F("fractionOfSolarDay")] = keyframes[i].fractionOfSolarDay;
-    keyframe[F("colorTemperature")] = keyframes[i].colorTemperature;
-    keyframe[F("brightness")] = keyframes[i].brightness;
+  for(const Keyframe& keyframe: TimeInputModule::CurrentKeyframes()) {
+    JsonObject outputKeyframe = json.add<JsonObject>();
+    outputKeyframe[F("fractionOfSolarDay")] = keyframe.fractionOfSolarDay;
+    outputKeyframe[F("colorTemperature")] = keyframe.colorTemperature;
+    outputKeyframe[F("brightness")] = keyframe.brightness;
   }
 
   char output[1024];
-  serializeJson(outputKeyframes, output);
+  serializeJson(json, output);
   Log.infoln(F("GET /keyframes: %s"), output);
 
   request->send(200, F("application/json"), output);

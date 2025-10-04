@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <output/OutputModule.h>
 
 struct Keyframe {
@@ -13,6 +14,6 @@ namespace TimeInputModule {
   void Initialize();
   void SetKeyframes(const Keyframe keyframes[]);
 
-  Keyframe* CurrentKeyframes();
+  std::vector<Keyframe> CurrentKeyframes();
   Keyframe CurrentKeyframe(float fractionOfSolarDay);
 };
