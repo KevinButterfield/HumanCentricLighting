@@ -6,4 +6,5 @@ namespace CustomWebServer {
 
     void ServerTask(void* parameter);
     void SetupKeyframeApi(WebServer* server);
+    void SetupCurrentTimeApi(WebServer* server);
 }

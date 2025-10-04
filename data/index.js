@@ -3,6 +3,7 @@ const sunrise = 8;
 const sunset = 20;
 
 let currentData = []; // { x: fractionOfSolarDay, y: value }
+let currentFractionOfSolarDay = 0;
 
 function renderTime(index) {
   const fractionOfSolarDay = currentData[index].x
@@ -21,11 +22,13 @@ function renderChart() {
     plugins: [ChartDataLabels],
     data: {
       labels: currentData.map(d => d.x),
-      datasets: [{
-        data: currentData,
-        tension: 0.4,
-        pointHitRadius: 25,
-      }]
+      datasets: [
+        {
+          data: currentData,
+          tension: 0.4,
+          pointHitRadius: 25,
+        },
+      ]
     },
     options: {
       layout: {
@@ -40,7 +43,7 @@ function renderChart() {
         x: {
           ticks: {
             callback: renderTime,
-          }
+          },
         },
         y: {
           ticks: {
@@ -56,6 +59,17 @@ function renderChart() {
         },
         tooltip: {
           enabled: false,
+        },
+        annotation: {
+          annotations: {
+            currentFractionOfSolarDay: {
+              type: 'line',
+              borderColor: 'black',
+              borderWidth: 2,
+              xMin: currentFractionOfSolarDay * 10,
+              xMax: currentFractionOfSolarDay * 10,
+            }
+          }
         },
         datalabels: {
           // display: (context) => context.dataIndex > 0 && context.dataIndex < context.dataset.data.length - 1,
@@ -79,10 +93,16 @@ function renderChart() {
 }
 
 async function main() {
+  Chart.register(window['chartjs-plugin-annotation'])
+
   try {
-    const response = await fetch('http://192.168.1.142/keyframes');
-    const data = await response.json();
-    currentData = data.map(kf => ({ x: kf.fractionOfSolarDay, y: kf.colorTemperature }));
+    const [keyframes, currentTime] = await Promise.all([
+      fetch('http://192.168.1.142/keyframes'),
+      fetch('http://192.168.1.142/current_time'),
+    ].map(p => p.then(r => r.json())))
+
+    currentData = keyframes.map(kf => ({ x: kf.fractionOfSolarDay, y: kf.colorTemperature }));
+    currentFractionOfSolarDay = currentTime;
 
     renderChart();
   } catch (error) {

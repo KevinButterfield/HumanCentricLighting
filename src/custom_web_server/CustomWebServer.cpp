@@ -45,7 +45,7 @@ void CustomWebServer::ServerTask(void* parameter) {
   }
 
   CustomWebServer::SetupKeyframeApi(&server);
-
+  CustomWebServer::SetupCurrentTimeApi(&server);
 
   server.serveStatic("/", LittleFS, "/");
   server.begin();
