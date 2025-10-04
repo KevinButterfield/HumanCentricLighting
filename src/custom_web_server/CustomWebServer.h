@@ -1,10 +1,11 @@
 #pragma once
-#include <WebServer.h>
+#include <ESPAsyncWebServer.h>
 
 namespace CustomWebServer {
     void StartServerOnBackgroundCore();
 
     void ServerTask(void* parameter);
-    void SetupKeyframeApi(WebServer* server);
-    void SetupCurrentTimeApi(WebServer* server);
+    void GetKeyframes(AsyncWebServerRequest *request);
+    void PostKeyframes(AsyncWebServerRequest *request);
+    void GetCurrentTime(AsyncWebServerRequest *request);
 }

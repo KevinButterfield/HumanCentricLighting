@@ -2,7 +2,6 @@
 
 #include <Arduino.h>
 #include <ArduinoLog.h>
-// #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
 #include <WiFi.h>
 
@@ -11,7 +10,7 @@ const int STACK_SIZE_BYTES = 8192;
 const int TASK_PRIORITY = 1;
 
 TaskHandle_t serverTaskHandle = nullptr;
-WebServer server;
+AsyncWebServer server(80);
 
 void CustomWebServer::StartServerOnBackgroundCore() {
   if (serverTaskHandle != nullptr) {
@@ -44,16 +43,15 @@ void CustomWebServer::ServerTask(void* parameter) {
     vTaskDelay(pdMS_TO_TICKS(250));
   }
 
-  CustomWebServer::SetupKeyframeApi(&server);
-  CustomWebServer::SetupCurrentTimeApi(&server);
-
+  server.on("/keyframes", HTTP_GET, CustomWebServer::GetKeyframes);
+  server.on("/keyframes", HTTP_POST, CustomWebServer::PostKeyframes);
+  server.on("/current-time", HTTP_GET, CustomWebServer::GetCurrentTime);
   server.serveStatic("/", LittleFS, "/");
-  server.begin();
-  Log.infoln(F("[Web] Server \"started\" at http://%s:%d"), WiFi.localIP().toString().c_str(), 80);
 
-  while (true) {
-    server.handleClient();
-    vTaskDelay(pdMS_TO_TICKS(10));
-  }
-  // vTaskDelay(portMAX_DELAY);
+  DefaultHeaders::Instance().addHeader(F("Access-Control-Allow-Origin"), F("*"));
+  server.begin();
+
+  Log.infoln(F("[Web] Server started at http://%s:%d"), WiFi.localIP().toString().c_str(), 80);
+
+  vTaskDelay(portMAX_DELAY);
 }

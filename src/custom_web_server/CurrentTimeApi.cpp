@@ -3,21 +3,18 @@
 #include <timekeeping/SolarTime.h>
 #include <ArduinoJson.h>
 
-void CustomWebServer::SetupCurrentTimeApi(WebServer* server) {
-  server->on("/current_time", HTTP_GET, [server]() {
-    SolarTime current = SolarTime::Now();
-    JsonDocument json;
+void CustomWebServer::GetCurrentTime(AsyncWebServerRequest *request) {
+  SolarTime current = SolarTime::Now();
+  JsonDocument json;
 
-    json["sunriseHours"] = current.sunriseHours;
-    json["sunsetHours"] = current.sunsetHours;
-    json["currentFraction"] = current.currentFraction;
-    
-    char output[256];
-    serializeJson(json, output);
+  json[F("sunriseHours")] = current.sunriseHours;
+  json[F("sunsetHours")] = current.sunsetHours;
+  json[F("currentFraction")] = current.currentFraction;
 
-    Log.infoln("GET /current_time: %s", output);
+  char output[256];
+  serializeJson(json, output);
 
-    server->sendHeader("Access-Control-Allow-Origin", "*");
-    server->send(200, "application/json", output);
-  });
+  Log.infoln(F("GET /current_time: %s"), output);
+
+  request->send(200, F("application/json"), output);
 }

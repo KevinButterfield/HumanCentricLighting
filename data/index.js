@@ -99,7 +99,7 @@ async function main() {
 
   const [keyframes, solarTime] = await Promise.all([
     fetch('http://192.168.1.142/keyframes'),
-    fetch('http://192.168.1.142/current_time'),
+    fetch('http://192.168.1.142/current-time'),
   ].map(p => p.then(r => r.json())))
 
   currentData = keyframes.map(kf => ({ x: kf.fractionOfSolarDay, y: kf.colorTemperature }));
