@@ -44,7 +44,7 @@ void CustomWebServer::ServerTask(void* parameter) {
   }
 
   server.on("/keyframes", HTTP_GET, CustomWebServer::GetKeyframes);
-  server.on("/keyframes", HTTP_POST, CustomWebServer::PostKeyframes);
+  server.on("/keyframes", HTTP_POST, [](AsyncWebServerRequest*){}, nullptr, CustomWebServer::PostKeyframes);
   server.on("/current-time", HTTP_GET, CustomWebServer::GetCurrentTime);
   server.serveStatic("/", LittleFS, "/");
 

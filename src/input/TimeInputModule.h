@@ -12,8 +12,9 @@ constexpr int KEYFRAME_COUNT = 11;
 
 namespace TimeInputModule {
   void Initialize();
-  void SetKeyframes(const Keyframe keyframes[]);
-
+  
+  void SetKeyframes(const std::vector<Keyframe>& keyframes);
   std::vector<Keyframe> CurrentKeyframes();
+
   Keyframe CurrentKeyframe(float fractionOfSolarDay);
 };

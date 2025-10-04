@@ -51,7 +51,7 @@ void TimeInputModule::Initialize() {
   prefs.end();
 }
 
-void setKeyframesInMemory(const Keyframe keyframes[]) {
+void setKeyframesInMemory(const std::vector<Keyframe>& keyframes) {
   for (int i = 0; i < KEYFRAME_COUNT; i++) {
     currentKeyframes[i].fractionOfSolarDay = keyframes[i].fractionOfSolarDay;
     currentKeyframes[i].colorTemperature = keyframes[i].colorTemperature;
@@ -59,7 +59,7 @@ void setKeyframesInMemory(const Keyframe keyframes[]) {
   }
 }
 
-void saveKeyframesToStorage(const Keyframe keyframes[]) {
+void saveKeyframesToStorage(const std::vector<Keyframe>& keyframes) {
   Preferences prefs;
   prefs.begin("time_input");
 
@@ -72,7 +72,7 @@ void saveKeyframesToStorage(const Keyframe keyframes[]) {
   prefs.end();
 }
 
-void TimeInputModule::SetKeyframes(const Keyframe keyframes[]) {
+void TimeInputModule::SetKeyframes(const std::vector<Keyframe>& keyframes) {
   setKeyframesInMemory(keyframes);
   saveKeyframesToStorage(keyframes);
 }
