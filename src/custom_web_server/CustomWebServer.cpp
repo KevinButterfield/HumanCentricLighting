@@ -4,7 +4,6 @@
 #include <ArduinoLog.h>
 // #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
-#include <WebServer.h>
 #include <WiFi.h>
 
 const char* const TASK_NAME = "WebServerTask";
@@ -44,6 +43,9 @@ void CustomWebServer::ServerTask(void* parameter) {
     Log.verboseln(F("[Web] Waiting for WiFi connection..."));
     vTaskDelay(pdMS_TO_TICKS(250));
   }
+
+  CustomWebServer::SetupKeyframeApi(&server);
+
 
   server.serveStatic("/", LittleFS, "/");
   server.begin();

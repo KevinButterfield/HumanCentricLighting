@@ -1,18 +1,11 @@
-const exampleData = [
-  { x: 0.0, y: 2700 },
-  { x: 0.167, y: 4000 },
-  { x: 0.333, y: 6500 },
-  { x: 0.5, y: 4500 },
-  { x: 0.667, y: 3500 },
-  { x: 0.833, y: 3000 },
-  { x: 1.0, y: 2700 },
-];
 
 const sunrise = 8;
 const sunset = 20;
 
+let currentData = []; // { x: fractionOfSolarDay, y: value }
+
 function renderTime(index) {
-  const fractionOfSolarDay = exampleData[index].x
+  const fractionOfSolarDay = currentData[index].x
   const time = sunrise + (sunset - sunrise) * fractionOfSolarDay;
   console.log({ time })
 
@@ -27,9 +20,9 @@ function renderChart() {
     type: 'line',
     plugins: [ChartDataLabels],
     data: {
-      labels: exampleData.map(d => d.x),
+      labels: currentData.map(d => d.x),
       datasets: [{
-        data: exampleData,
+        data: currentData,
         tension: 0.4,
         pointHitRadius: 25,
       }]
@@ -85,8 +78,16 @@ function renderChart() {
   });
 }
 
-function main() {
-  renderChart();
+async function main() {
+  try {
+    const response = await fetch('http://192.168.1.142/keyframes');
+    const data = await response.json();
+    currentData = data.map(kf => ({ x: kf.fractionOfSolarDay, y: kf.colorTemperature }));
+
+    renderChart();
+  } catch (error) {
+    console.error('Error fetching keyframes:', error);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', main);

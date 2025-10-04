@@ -1,10 +1,10 @@
-#include "InputModule.h"
+#include "ManualInputModule.h"
 #include <Arduino.h>
 
 const int COLOR_TEMP_PIN = 34;
 const int BRIGHTNESS_PIN = 35;
 
-void InputModule::Initialize() {
+void ManualInputModule::Initialize() {
   pinMode(COLOR_TEMP_PIN, INPUT);
   pinMode(BRIGHTNESS_PIN, INPUT);
 }
@@ -25,6 +25,6 @@ Light LightFromPotentiometers() {
 }
 
 
-Light InputModule::LightValues() {
+Light ManualInputModule::LightValues() {
   return LightFromPotentiometers();
 }

@@ -4,7 +4,8 @@
 
 #include "secrets.h"
 #include "debug/debug.h"
-#include "input/InputModule.h"
+#include "input/ManualInputModule.h"
+#include "input/TimeInputModule.h"
 #include "output/OutputModule.h"
 #include "timekeeping/TimekeepingModule.h"
 #include "custom_web_server/CustomWebServer.h"
@@ -13,9 +14,10 @@ TimekeepingModule timekeeping;
 
 void setup() {
   Serial.begin(115200);
-  Log.begin(LOG_LEVEL_INFO, &Serial, true);
+  Log.begin(LOG_LEVEL_NOTICE, &Serial, true);
   BlinkingLight::Initialize();
-  InputModule::Initialize();
+  ManualInputModule::Initialize();
+  TimeInputModule::Initialize();
   OutputModule::Initialize();
   timekeeping.begin();
 
@@ -28,7 +30,7 @@ void setup() {
 void loop() {
   timekeeping.update();
 
-  OutputModule::Update(InputModule::LightValues());
+  OutputModule::Update(ManualInputModule::LightValues());
 
   delay(250);
 }
