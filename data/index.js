@@ -1,17 +1,19 @@
-
-const sunrise = 8;
-const sunset = 20;
-
 let currentData = []; // { x: fractionOfSolarDay, y: value }
-let currentFractionOfSolarDay = 0;
+let currentSolarTime = { sunriseHours: 0, sunsetHours: 0, currentFraction: 0 };
 
-function renderTime(index) {
-  const fractionOfSolarDay = currentData[index].x
-  const time = sunrise + (sunset - sunrise) * fractionOfSolarDay;
-  console.log({ time })
+const timeFormater = new Intl.DateTimeFormat(undefined, { timeStyle: 'short' });
 
-  const percent = Math.round(fractionOfSolarDay * 100);
-  return percent + '%';
+function formatTime(fractionOfSolarDay) {
+  const hoursIntoSolarDay = fractionOfSolarDay * (currentSolarTime.sunsetHours - currentSolarTime.sunriseHours);
+  const time = currentSolarTime.sunriseHours + hoursIntoSolarDay;
+
+  const hoursComponent = Math.floor(time);
+  const minutesComponent = (time - hoursComponent) * 60;
+
+  const output = new Date();
+  output.setUTCHours(hoursComponent);
+  output.setUTCMinutes(minutesComponent);
+  return timeFormater.format(output);
 }
 
 function renderChart() {
@@ -42,7 +44,7 @@ function renderChart() {
       scales: {
         x: {
           ticks: {
-            callback: renderTime,
+            callback: (index) => formatTime(currentData[index].x),
           },
         },
         y: {
@@ -66,8 +68,8 @@ function renderChart() {
               type: 'line',
               borderColor: 'black',
               borderWidth: 2,
-              xMin: currentFractionOfSolarDay * 10,
-              xMax: currentFractionOfSolarDay * 10,
+              xMin: currentSolarTime.currentFraction * 10,
+              xMax: currentSolarTime.currentFraction * 10,
             }
           }
         },
@@ -95,19 +97,15 @@ function renderChart() {
 async function main() {
   Chart.register(window['chartjs-plugin-annotation'])
 
-  try {
-    const [keyframes, currentTime] = await Promise.all([
-      fetch('http://192.168.1.142/keyframes'),
-      fetch('http://192.168.1.142/current_time'),
-    ].map(p => p.then(r => r.json())))
+  const [keyframes, solarTime] = await Promise.all([
+    fetch('http://192.168.1.142/keyframes'),
+    fetch('http://192.168.1.142/current_time'),
+  ].map(p => p.then(r => r.json())))
 
-    currentData = keyframes.map(kf => ({ x: kf.fractionOfSolarDay, y: kf.colorTemperature }));
-    currentFractionOfSolarDay = currentTime;
+  currentData = keyframes.map(kf => ({ x: kf.fractionOfSolarDay, y: kf.colorTemperature }));
+  currentSolarTime = solarTime;
 
-    renderChart();
-  } catch (error) {
-    console.error('Error fetching keyframes:', error);
-  }
+  renderChart();
 }
 
 document.addEventListener('DOMContentLoaded', main);

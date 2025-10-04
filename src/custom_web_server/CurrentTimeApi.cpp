@@ -1,15 +1,18 @@
 #include "CustomWebServer.h"
 #include <ArduinoLog.h>
-#include <timekeeping/CurrentSolarTime.h>
+#include <timekeeping/SolarTime.h>
 
 void CustomWebServer::SetupCurrentTimeApi(WebServer* server) {
   server->on("/current_time", HTTP_GET, [server]() {
-    float currentFraction = CurrentFractionOfSolarDay();
-    String formattedFraction = String(currentFraction, 3);
+    SolarTime current = SolarTime::Now();
 
-    Log.infoln("GET /current_time: %s", formattedFraction.c_str());
+    String json = "{\"sunriseHours\":" + String(current.sunriseHours, 3) +
+            ",\"sunsetHours\":" + String(current.sunsetHours, 3) +
+            ",\"currentFraction\":" + String(current.currentFraction, 3) + "}";
+
+    Log.infoln("GET /current_time: %s", json.c_str());
 
     server->sendHeader("Access-Control-Allow-Origin", "*");
-    server->send(200, "application/json", formattedFraction);
+    server->send(200, "application/json", json);
   });
 }
