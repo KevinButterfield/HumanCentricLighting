@@ -60,7 +60,12 @@ window.renderChart = function (canvas, params) {
           anchor: 'end',
         },
         dragData: {
-          onDrag: (_event, datasetIndex, index, value) => {
+          onDrag: (event, datasetIndex, index, value) => {
+            if (event.target !== canvas) {
+              // This plugin fucking sucks
+              return false;
+            }
+
             // Plainly setting a minimum doesn't floor the value during drag
             if (value.y < params.minValue) {
               chart.data.datasets[datasetIndex].data[index].y = params.minValue;
