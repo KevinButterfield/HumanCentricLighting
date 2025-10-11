@@ -1,8 +1,10 @@
 #pragma once
 #include <vector>
+#include <ArduinoJson.h>
 #include <output/OutputModule.h>
 
-struct Keyframe {
+struct Keyframe
+{
   float fractionOfSolarDay;
   uint16_t colorTemperature;
   uint8_t brightness;
@@ -10,11 +12,13 @@ struct Keyframe {
 
 constexpr int KEYFRAME_COUNT = 11;
 
-namespace TimeInputModule {
+namespace TimeInputModule
+{
   void Initialize();
-  
-  void SetKeyframes(const std::vector<Keyframe>& keyframes);
+
+  void SetKeyframes(const JsonArray keyframes, const String &raw);
   std::vector<Keyframe> CurrentKeyframes();
 
+  Keyframe* CurrentKeyframesInternal();
   Keyframe CurrentKeyframe(float fractionOfSolarDay);
 };

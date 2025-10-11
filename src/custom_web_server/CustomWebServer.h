@@ -2,6 +2,7 @@
 #include <ESPAsyncWebServer.h>
 
 namespace CustomWebServer {
+    void ConnectToWiFi();
     void StartServer();
 
     void GetKeyframes(AsyncWebServerRequest *request);

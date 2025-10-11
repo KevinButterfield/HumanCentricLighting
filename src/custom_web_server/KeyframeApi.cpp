@@ -1,6 +1,7 @@
 #include "CustomWebServer.h"
 #include <ArduinoJson.h>
 #include <ArduinoLog.h>
+#include <sstream>
 #include <input/TimeInputModule.h>
 
 void CustomWebServer::GetKeyframes(AsyncWebServerRequest* request) {
@@ -22,24 +23,33 @@ void CustomWebServer::GetKeyframes(AsyncWebServerRequest* request) {
 
 void CustomWebServer::PostKeyframes(AsyncWebServerRequest* request, uint8_t* data, size_t len, size_t index, size_t total) {
   JsonDocument json;
+  JsonArray keyframes;
+  String body(data, len);
 
-  auto error = deserializeJson(json, data, len);
-  if (error || !json.is<JsonArray>() || json.as<JsonArray>().size() != 11) {
-    request->send(422, F("application/text"), error ? error.c_str() : "Not an array");
+  auto error = deserializeJson(json, body);
+  keyframes = json.as<JsonArray>();
+
+  if (error || !json.is<JsonArray>() || keyframes.size() != 11) {
+    request->send(422, F("text/plain"), error ? error.c_str() : "Not an array");
     return;
+  } else for (int i = 0; i < 11; ++i) {
+    auto fractionGood = keyframes[i]["fractionOfSolarDay"].is<float>();
+    auto colorTempGood = keyframes[i]["colorTemperature"].is<uint16_t>();
+    auto brightnessGood = keyframes[i]["brightness"].is<uint8_t>();
+
+    if (!fractionGood || !colorTempGood || !brightnessGood) {
+      std::stringstream messageStream;
+      messageStream << "Invalid Input " << fractionGood << colorTempGood << brightnessGood << std::endl;
+      std::string string(messageStream.str());
+
+      request->send(422, F("text/plain"), string.c_str());
+      return;
+    }
   }
 
-  JsonArray keyframes = json.as<JsonArray>();
   Log.infoln(F("POST /keyframes: %s"), data);
 
-  std::vector<Keyframe> output(keyframes.size());
-  for (int i = 0; i < output.size(); ++i) {
-    output[i].fractionOfSolarDay = keyframes[i]["fractionOfSolarDay"] | 0.0f;
-    output[i].colorTemperature = keyframes[i]["colorTemperature"] | 2700;
-    output[i].brightness = keyframes[i]["brightness"] | 100;
-  }
-
-  TimeInputModule::SetKeyframes(output);
+  TimeInputModule::SetKeyframes(keyframes, body);
 
   request->send(201);
 }

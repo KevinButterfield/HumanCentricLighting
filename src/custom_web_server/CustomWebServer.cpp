@@ -1,4 +1,5 @@
 #include "CustomWebServer.h"
+#include "secrets.h"
 
 #include <Arduino.h>
 #include <ArduinoLog.h>
@@ -10,6 +11,11 @@ const int STACK_SIZE_BYTES = 8192;
 const int TASK_PRIORITY = 1;
 
 AsyncWebServer server(80);
+
+void CustomWebServer::ConnectToWiFi() {
+  Log.noticeln(F("WiFi Connecting to %s..."), WIFI_SSID);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+}
 
 void CustomWebServer::StartServer() {
   if (!LittleFS.begin()) {
@@ -26,7 +32,7 @@ void CustomWebServer::StartServer() {
   server.on("/keyframes", HTTP_GET, CustomWebServer::GetKeyframes);
   server.on("/keyframes", HTTP_POST, [](AsyncWebServerRequest*){}, nullptr, CustomWebServer::PostKeyframes);
   server.on("/current-time", HTTP_GET, CustomWebServer::GetCurrentTime);
-  server.serveStatic("/", LittleFS, "/");
+  server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
 
   DefaultHeaders::Instance().addHeader(F("Access-Control-Allow-Origin"), F("*"));
   server.begin();

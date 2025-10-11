@@ -2,7 +2,6 @@
 #include <ArduinoLog.h>
 #include <WiFi.h>
 
-#include "secrets.h"
 #include "custom_debug_utils/BlinkingLight.h"
 #include "input/ManualInputModule.h"
 #include "input/TimeInputModule.h"
@@ -15,8 +14,7 @@ constexpr int STACK_SIZE_BYTES = 8192;
 
 void ServerTask(void *parameter)
 {
-  Log.noticeln(F("WiFi Connecting to %s..."), WIFI_SSID);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  CustomWebServer::ConnectToWiFi();
   CustomWebServer::StartServer();
 
   while (true)
@@ -31,6 +29,7 @@ void setup()
   Serial.begin(115200);
   Log.begin(LOG_LEVEL_NOTICE, &Serial, true);
   ManualInputModule::Initialize();
+  TimeInputModule::Initialize();
   OutputModule::Initialize();
   timekeeping.begin();
 
