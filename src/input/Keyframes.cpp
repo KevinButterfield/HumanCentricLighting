@@ -2,13 +2,15 @@
 
 #include <ArduinoLog.h>
 #include <Preferences.h>
+#include <sstream>
 #include <math.h>
 
 constexpr int CURRENT_KEYFRAME_SCHEMA_VERSION = 1;
 
 Keyframe currentKeyframes[KEYFRAME_COUNT];
 
-Keyframe* TimeInputModule::CurrentKeyframesInternal() {
+Keyframe *TimeInputModule::CurrentKeyframesInternal()
+{
   return currentKeyframes;
 }
 
@@ -85,6 +87,21 @@ void TimeInputModule::Initialize()
   clearStaleKeyframes(prefs);
   loadKeyframesFromStorage(prefs);
   prefs.end();
+}
+
+String TimeInputModule::ValidateKeyframe(const JsonObject json)
+{
+  auto fractionGood = json["fractionOfSolarDay"].is<float>();
+  auto colorTempGood = json["colorTemperature"].is<uint16_t>();
+  auto brightnessGood = json["brightness"].is<uint8_t>();
+  std::stringstream errors;
+
+  if (!fractionGood) errors << "Invalid fractionOfSolarDay ";
+  if (!colorTempGood) errors << "Invalid colorTemperature ";
+  if (!brightnessGood) errors << "Invalid brightness ";
+
+  std::string string(errors.str());
+  return String(string.c_str());
 }
 
 void TimeInputModule::SetKeyframes(const JsonArray json, const String &raw)

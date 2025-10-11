@@ -1,7 +1,6 @@
 #include "CustomWebServer.h"
 #include <ArduinoJson.h>
 #include <ArduinoLog.h>
-#include <sstream>
 #include <input/TimeInputModule.h>
 
 void CustomWebServer::GetKeyframes(AsyncWebServerRequest* request) {
@@ -33,16 +32,10 @@ void CustomWebServer::PostKeyframes(AsyncWebServerRequest* request, uint8_t* dat
     request->send(422, F("text/plain"), error ? error.c_str() : "Not an array");
     return;
   } else for (int i = 0; i < 11; ++i) {
-    auto fractionGood = keyframes[i]["fractionOfSolarDay"].is<float>();
-    auto colorTempGood = keyframes[i]["colorTemperature"].is<uint16_t>();
-    auto brightnessGood = keyframes[i]["brightness"].is<uint8_t>();
+    auto validationError = TimeInputModule::ValidateKeyframe(keyframes[i]);
 
-    if (!fractionGood || !colorTempGood || !brightnessGood) {
-      std::stringstream messageStream;
-      messageStream << "Invalid Input " << fractionGood << colorTempGood << brightnessGood << std::endl;
-      std::string string(messageStream.str());
-
-      request->send(422, F("text/plain"), string.c_str());
+    if (!validationError.isEmpty()) {
+      request->send(422, F("text/plain"), validationError.c_str());
       return;
     }
   }

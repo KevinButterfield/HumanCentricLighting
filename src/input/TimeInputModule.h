@@ -16,9 +16,10 @@ namespace TimeInputModule
 {
   void Initialize();
 
+  String ValidateKeyframe(const JsonObject keyframe);
   void SetKeyframes(const JsonArray keyframes, const String &raw);
+  
   std::vector<Keyframe> CurrentKeyframes();
-
   Keyframe* CurrentKeyframesInternal();
   Keyframe CurrentKeyframe(float fractionOfSolarDay);
 };
