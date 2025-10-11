@@ -5,7 +5,7 @@
 #include <sstream>
 #include <math.h>
 
-constexpr int CURRENT_KEYFRAME_SCHEMA_VERSION = 2;
+constexpr int CURRENT_KEYFRAME_SCHEMA_VERSION = 3;
 
 Keyframe currentKeyframes[KEYFRAME_COUNT];
 

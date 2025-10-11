@@ -54,9 +54,13 @@ Keyframe currentKeyframe(float fractionOfSolarDay)
 }
 
 Light TimeInputModule::LightValues() {
-  Keyframe keyframe = currentKeyframe(SolarTime::Now().currentFraction);
+  auto now = SolarTime::Now();
+  Keyframe keyframe = currentKeyframe(now.currentFraction);
+  Log.verbose("Time read SolarFraction: %F; ", now.currentFraction);
 
   Light output;
+  output.brightness = keyframe.brightness;
+  output.colorTemperature = keyframe.colorTemperature;
 
   return output;
 }
