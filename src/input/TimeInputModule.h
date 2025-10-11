@@ -19,6 +19,7 @@ namespace TimeInputModule
 
   String ValidateKeyframe(const JsonObject keyframe);
   void SetKeyframes(const JsonArray keyframes, const String &raw);
+  void ResetKeyframes();
   
   std::vector<Keyframe> CurrentKeyframes();
   Keyframe* CurrentKeyframesInternal();

@@ -46,5 +46,5 @@ void setup()
 void loop()
 {
   OutputModule::Update(TimeInputModule::LightValues());
-  delay(250);
+  delay(1000);
 }

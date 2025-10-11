@@ -1,12 +1,12 @@
 window.renderChart = function (canvas, params) {
-  return new Chart(canvas, {
+  const chart = new Chart(canvas, {
     type: 'line',
     plugins: [ChartDataLabels],
     data: {
-      labels: params.data.map(d => d.x),
+      labels: params.buildData().map(({ x }) => x),
       datasets: [
         {
-          data: params.data,
+          data: params.buildData(),
           tension: 0.4,
           pointHitRadius: 25,
         },
@@ -63,7 +63,7 @@ window.renderChart = function (canvas, params) {
           onDrag: (_event, datasetIndex, index, value) => {
             // Plainly setting a minimum doesn't floor the value during drag
             if (value.y < params.minValue) {
-              chart.params.datasets[datasetIndex].data[index].y = params.minValue;
+              chart.data.datasets[datasetIndex].data[index].y = params.minValue;
               chart.update('none');
               return false;
             }
@@ -73,4 +73,9 @@ window.renderChart = function (canvas, params) {
       },
     },
   });
+
+  return () => {
+    chart.data.datasets[0].data = params.buildData();
+    chart.update();
+  };
 }

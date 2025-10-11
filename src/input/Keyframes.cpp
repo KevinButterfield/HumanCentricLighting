@@ -17,7 +17,9 @@ Keyframe *TimeInputModule::CurrentKeyframesInternal()
 float defaultModifier(float fractionOfSolarDay, float minValue, float maxValue)
 {
   float progress = sinf(M_PI * fractionOfSolarDay);
-  return minValue + (maxValue - minValue) * progress;
+  float value = minValue + (maxValue - minValue) * progress;
+
+  return fmin(fmax(minValue, value), maxValue);
 }
 
 void clearStaleKeyframes(Preferences &prefs)
@@ -82,6 +84,15 @@ std::vector<Keyframe> TimeInputModule::CurrentKeyframes()
   return std::vector<Keyframe>(currentKeyframes, currentKeyframes + KEYFRAME_COUNT);
 }
 
+void TimeInputModule::ResetKeyframes()
+{
+  Preferences prefs;
+  prefs.begin("time_input");
+  prefs.clear();
+  setCurrentToSinWaveDefault();
+  prefs.end();
+}
+
 void TimeInputModule::Initialize()
 {
   Preferences prefs;
@@ -91,11 +102,13 @@ void TimeInputModule::Initialize()
   prefs.end();
 }
 
-bool validateFraction(JsonVariant value, float min) {
+bool validateFraction(JsonVariant value, float min)
+{
   return value.is<float>() && value.as<float>() >= min && value.as<float>() <= 1;
 }
 
-bool validateColorTemp(JsonVariant value) {
+bool validateColorTemp(JsonVariant value)
+{
   return value.is<int>() && value.as<int>() >= 2700 && value.as<int>() <= 6500;
 }
 
@@ -106,9 +119,12 @@ String TimeInputModule::ValidateKeyframe(const JsonObject json)
   bool brightnessGood = validateFraction(json["brightness"], 0.25);
   std::stringstream errors;
 
-  if (!fractionGood) errors << "Invalid fractionOfSolarDay ";
-  if (!colorTempGood) errors << "Invalid colorTemperature ";
-  if (!brightnessGood) errors << "Invalid brightness ";
+  if (!fractionGood)
+    errors << "Invalid fractionOfSolarDay ";
+  if (!colorTempGood)
+    errors << "Invalid colorTemperature ";
+  if (!brightnessGood)
+    errors << "Invalid brightness ";
 
   std::string string(errors.str());
   return String(string.c_str());
