@@ -28,85 +28,21 @@ function formatTime(fractionOfSolarDay) {
   return timeFormater.format(output);
 }
 
-function renderChart() {
-  const chartCanvas = document.getElementById('chart');
-
-  const chart = new Chart(chartCanvas, {
-    type: 'line',
-    plugins: [ChartDataLabels],
-    data: {
-      labels: keyframes.map(d => d.x),
-      datasets: [
-        {
-          data: keyframes.map(kf => ({ x: kf.fractionOfSolarDay, y: kf.colorTemperature })),
-          tension: 0.4,
-          pointHitRadius: 25,
-        },
-      ]
-    },
-    options: {
-      responsive: true,
-      layout: {
-        padding: {
-          top: 40,
-          left: 20,
-          right: 20,
-          bottom: 10,
-        }
-      },
-      scales: {
-        x: {
-          ticks: {
-            callback: (index) => formatTime(keyframes[index].fractionOfSolarDay),
-          },
-        },
-        y: {
-          ticks: {
-            display: false,
-          },
-          suggestedMin: 2700,
-          suggestedMax: 6500,
-        },
-      },
-      plugins: {
-        legend: {
-          display: false,
-        },
-        tooltip: {
-          enabled: false,
-        },
-        annotation: {
-          annotations: {
-            currentFractionOfSolarDay: {
-              type: 'line',
-              borderColor: 'black',
-              borderWidth: 2,
-              xMin: currentSolarTime.currentFraction * 10,
-              xMax: currentSolarTime.currentFraction * 10,
-            }
-          }
-        },
-        datalabels: {
-          // display: (context) => context.dataIndex > 0 && context.dataIndex < context.dataset.data.length - 1,
-          formatter: (value) => Math.round(value.y) + 'K',
-          align: 'top',
-          anchor: 'end',
-        },
-        dragData: {
-          onDrag: (_event, datasetIndex, index, value) => {
-            // Plainly setting a minimum doesn't floor the value during drag
-            if (value.y < 2700) {
-              chart.data.datasets[datasetIndex].data[index].y = 2700;
-              chart.update('none');
-              return false;
-            }
-          },
-          onDragEnd: (_event, _datasetIndex, index, value) => {
-            keyframes[index].colorTemperature = Math.round(value.y);
-          }
-        },
-      },
-    },
+function renderCharts() {
+  window.renderChart(document.getElementById('color-temp-chart'), {
+    data: keyframes.map(kf => ({ x: kf.fractionOfSolarDay, y: kf.colorTemperature })),
+    minValue: 2700,
+    maxValue: 6500,
+    formatDataLabel: (value) => Math.round(value.y) + 'K',
+    onValueChanged: (index, value) => keyframes[index].colorTemperature = Math.round(value.y),
+  });
+  
+  window.renderChart(document.getElementById('brightness-chart'), {
+    data: keyframes.map(kf => ({ x: kf.fractionOfSolarDay, y: kf.brightness })),
+    minValue: 0,
+    maxValue: 1,
+    formatDataLabel: (value) => Math.round(value.y * 100) + '%',
+    onValueChanged: (index, value) => keyframes[index].brightness = value.y,
   });
 }
 
@@ -120,7 +56,7 @@ async function main() {
   keyframes = a;
   currentSolarTime = b;
 
-  renderChart();
+  renderCharts();
 }
 
 document.addEventListener('DOMContentLoaded', main);
