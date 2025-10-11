@@ -9,29 +9,9 @@ const char* const TASK_NAME = "WebServerTask";
 const int STACK_SIZE_BYTES = 8192;
 const int TASK_PRIORITY = 1;
 
-TaskHandle_t serverTaskHandle = nullptr;
 AsyncWebServer server(80);
 
-void CustomWebServer::StartServerOnBackgroundCore() {
-  if (serverTaskHandle != nullptr) {
-    Log.warningln(F("[Web] Server task already running."));
-    return;
-  }
-
-  xTaskCreatePinnedToCore(
-    CustomWebServer::ServerTask,
-    TASK_NAME,
-    STACK_SIZE_BYTES,
-    nullptr,
-    TASK_PRIORITY,
-    &serverTaskHandle,
-    0
-  );
-}
-
-void CustomWebServer::ServerTask(void* parameter) {
-  Log.infoln(F("[Web] Server task started on core %d"), xPortGetCoreID());
-  
+void CustomWebServer::StartServer() {
   if (!LittleFS.begin()) {
     Log.errorln(F("[Web] Failed to mount LittleFS"));
     vTaskDelete(NULL);

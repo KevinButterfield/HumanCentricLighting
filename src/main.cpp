@@ -11,26 +11,40 @@
 #include "custom_web_server/CustomWebServer.h"
 
 TimekeepingModule timekeeping;
+constexpr int STACK_SIZE_BYTES = 8192;
 
-void setup() {
+void ServerTask(void *parameter)
+{
+  Log.noticeln(F("WiFi Connecting to %s..."), WIFI_SSID);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  CustomWebServer::StartServer();
+
+  while (true)
+  {
+    timekeeping.update();
+    vTaskDelay(pdMS_TO_TICKS(250));
+  }
+}
+
+void setup()
+{
   Serial.begin(115200);
   Log.begin(LOG_LEVEL_NOTICE, &Serial, true);
-  BlinkingLight::Initialize();
   ManualInputModule::Initialize();
-  TimeInputModule::Initialize();
   OutputModule::Initialize();
   timekeeping.begin();
 
-  Log.noticeln(F("WiFi Connecting to %s..."), WIFI_SSID);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-
-  CustomWebServer::StartServerOnBackgroundCore();
+  xTaskCreatePinnedToCore(
+      ServerTask,
+      "ServerTask",
+      STACK_SIZE_BYTES,
+      nullptr,
+      1,
+      nullptr,
+      0);
 }
 
-void loop() {
-  timekeeping.update();
-
+void loop()
+{
   OutputModule::Update(ManualInputModule::LightValues());
-
-  delay(250);
 }
