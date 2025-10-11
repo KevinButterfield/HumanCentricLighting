@@ -34,13 +34,9 @@ void setCurrentFromJson(JsonArray json)
 {
   for (int i = 0; i < KEYFRAME_COUNT; ++i)
   {
-    float fractionOfSolarDay = json[i]["fractionOfSolarDay"];
-    int colorTemperature = json[i]["colorTemperature"];
-    int brightness = json[i]["brightness"];
-
-    currentKeyframes[i].fractionOfSolarDay = fractionOfSolarDay;
-    currentKeyframes[i].colorTemperature = colorTemperature;
-    currentKeyframes[i].brightness = brightness;
+    currentKeyframes[i].fractionOfSolarDay = json[i]["fractionOfSolarDay"].as<float>();
+    currentKeyframes[i].colorTemperature = json[i]["colorTemperature"].as<int>();
+    currentKeyframes[i].brightness = json[i]["brightness"].as<float>();
   }
 }
 
@@ -67,7 +63,7 @@ void loadKeyframesFromStorage(Preferences &prefs)
   }
   else
   {
-    Log.infoln(F("Loaded stored keyframes"));
+    Log.infoln(F("Loaded stored keyframes %s"), json);
     setCurrentFromJson(parsed.as<JsonArray>());
   }
 }
@@ -95,11 +91,19 @@ void TimeInputModule::Initialize()
   prefs.end();
 }
 
+bool validateFraction(JsonVariant value, float min) {
+  return value.is<float>() && value.as<float>() >= min && value.as<float>() <= 1;
+}
+
+bool validateColorTemp(JsonVariant value) {
+  return value.is<int>() && value.as<int>() >= 2700 && value.as<int>() <= 6500;
+}
+
 String TimeInputModule::ValidateKeyframe(const JsonObject json)
 {
-  auto fractionGood = json["fractionOfSolarDay"].is<float>();
-  auto colorTempGood = json["colorTemperature"].is<int>();
-  auto brightnessGood = json["brightness"].is<float>();
+  bool fractionGood = validateFraction(json["fractionOfSolarDay"], 0);
+  bool colorTempGood = validateColorTemp(json["colorTemperature"]);
+  bool brightnessGood = validateFraction(json["brightness"], 0.25);
   std::stringstream errors;
 
   if (!fractionGood) errors << "Invalid fractionOfSolarDay ";

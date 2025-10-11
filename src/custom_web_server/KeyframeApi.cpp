@@ -40,9 +40,9 @@ void CustomWebServer::PostKeyframes(AsyncWebServerRequest* request, uint8_t* dat
     }
   }
 
-  Log.infoln(F("POST /keyframes: %s"), data);
+  Log.infoln(F("POST /keyframes: %s"), body.c_str());
 
   TimeInputModule::SetKeyframes(keyframes, body);
 
-  request->send(201);
+  return GetKeyframes(request);
 }
