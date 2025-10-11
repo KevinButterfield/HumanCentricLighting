@@ -27,7 +27,7 @@ void ServerTask(void *parameter)
 void setup()
 {
   Serial.begin(115200);
-  Log.begin(LOG_LEVEL_NOTICE, &Serial, true);
+  Log.begin(LOG_LEVEL_VERBOSE, &Serial, true);
   ManualInputModule::Initialize();
   TimeInputModule::Initialize();
   OutputModule::Initialize();
@@ -46,4 +46,5 @@ void setup()
 void loop()
 {
   OutputModule::Update(ManualInputModule::LightValues());
+  delay(250);
 }

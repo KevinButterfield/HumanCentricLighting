@@ -5,7 +5,7 @@
 #include <sstream>
 #include <math.h>
 
-constexpr int CURRENT_KEYFRAME_SCHEMA_VERSION = 1;
+constexpr int CURRENT_KEYFRAME_SCHEMA_VERSION = 2;
 
 Keyframe currentKeyframes[KEYFRAME_COUNT];
 
@@ -14,7 +14,7 @@ Keyframe *TimeInputModule::CurrentKeyframesInternal()
   return currentKeyframes;
 }
 
-int defaultModifier(float fractionOfSolarDay, int minValue, int maxValue)
+float defaultModifier(float fractionOfSolarDay, float minValue, float maxValue)
 {
   float progress = sinf(M_PI * fractionOfSolarDay);
   return minValue + (maxValue - minValue) * progress;
@@ -51,7 +51,7 @@ void setCurrentToSinWaveDefault()
     float fractionOfSolarDay = (float)i / (KEYFRAME_COUNT - 1);
     currentKeyframes[i].fractionOfSolarDay = fractionOfSolarDay;
     currentKeyframes[i].colorTemperature = defaultModifier(fractionOfSolarDay, 2700, 6500);
-    currentKeyframes[i].brightness = defaultModifier(fractionOfSolarDay, 25, 100);
+    currentKeyframes[i].brightness = defaultModifier(fractionOfSolarDay, .25, 1);
   }
 }
 
@@ -80,6 +80,12 @@ void saveKeyframesToStorage(const String &serialized)
   prefs.end();
 }
 
+std::vector<Keyframe> TimeInputModule::CurrentKeyframes()
+{
+  auto currentKeyframes = CurrentKeyframesInternal();
+  return std::vector<Keyframe>(currentKeyframes, currentKeyframes + KEYFRAME_COUNT);
+}
+
 void TimeInputModule::Initialize()
 {
   Preferences prefs;
@@ -92,8 +98,8 @@ void TimeInputModule::Initialize()
 String TimeInputModule::ValidateKeyframe(const JsonObject json)
 {
   auto fractionGood = json["fractionOfSolarDay"].is<float>();
-  auto colorTempGood = json["colorTemperature"].is<uint16_t>();
-  auto brightnessGood = json["brightness"].is<uint8_t>();
+  auto colorTempGood = json["colorTemperature"].is<int>();
+  auto brightnessGood = json["brightness"].is<float>();
   std::stringstream errors;
 
   if (!fractionGood) errors << "Invalid fractionOfSolarDay ";

@@ -3,6 +3,7 @@
 #include <ArduinoLog.h>
 #include <Preferences.h>
 #include <math.h>
+#include <timekeeping/SolarTime.h>
 
 void findSurroundingKeyframePair(float fractionOfSolarDay, Keyframe &lowerBound, Keyframe &upperBound)
 {
@@ -36,7 +37,7 @@ Keyframe interpolateKeyframes(const Keyframe &kf1, const Keyframe &kf2, float fr
   return result;
 }
 
-Keyframe TimeInputModule::CurrentKeyframe(float fractionOfSolarDay)
+Keyframe currentKeyframe(float fractionOfSolarDay)
 {
   Keyframe kf1;
   Keyframe kf2;
@@ -52,8 +53,10 @@ Keyframe TimeInputModule::CurrentKeyframe(float fractionOfSolarDay)
   }
 }
 
-std::vector<Keyframe> TimeInputModule::CurrentKeyframes()
-{
-  auto currentKeyframes = CurrentKeyframesInternal();
-  return std::vector<Keyframe>(currentKeyframes, currentKeyframes + KEYFRAME_COUNT);
+Light TimeInputModule::LightValues() {
+  Keyframe keyframe = currentKeyframe(SolarTime::Now().currentFraction);
+
+  Light output;
+
+  return output;
 }

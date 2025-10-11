@@ -6,8 +6,8 @@
 struct Keyframe
 {
   float fractionOfSolarDay;
-  uint16_t colorTemperature;
-  uint8_t brightness;
+  float brightness;
+  int colorTemperature;
 };
 
 constexpr int KEYFRAME_COUNT = 11;
@@ -15,11 +15,11 @@ constexpr int KEYFRAME_COUNT = 11;
 namespace TimeInputModule
 {
   void Initialize();
+  Light LightValues();
 
   String ValidateKeyframe(const JsonObject keyframe);
   void SetKeyframes(const JsonArray keyframes, const String &raw);
   
   std::vector<Keyframe> CurrentKeyframes();
   Keyframe* CurrentKeyframesInternal();
-  Keyframe CurrentKeyframe(float fractionOfSolarDay);
 };

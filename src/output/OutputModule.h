@@ -2,8 +2,8 @@
 #include <RTClib.h>
 
 struct Light {
-    int warm;
-    int cool;
+    int colorTemperature;
+    float brightness;
 };
 
 namespace OutputModule {
