@@ -2,9 +2,10 @@ let keyframes = []; // { x: fractionOfSolarDay, y: value }
 let currentSolarTime = { sunriseHours: 0, sunsetHours: 0, currentFraction: 0 };
 let chartUpdateCallbacks = []
 
+const routePrefix = window.location.toString().startsWith('file://') ? 'http://192.168.1.142' : '';
 const Routes = {
-  keyframes: 'http://192.168.1.142/keyframes',
-  currentSolarTime: 'http://192.168.1.142/current-time',
+  keyframes: `${routePrefix}/keyframes`,
+  currentSolarTime: `${routePrefix}/current-time`,
 }
 
 const timeFormater = new Intl.DateTimeFormat(undefined, { timeStyle: 'short' });

@@ -14,6 +14,7 @@ window.renderChart = function (canvas, params) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       layout: {
         padding: {
           top: 40,
@@ -26,6 +27,9 @@ window.renderChart = function (canvas, params) {
         x: {
           ticks: {
             callback: (index) => formatTime(keyframes[index].fractionOfSolarDay),
+            font: {
+              size: 13,
+            },
           },
         },
         y: {
@@ -58,6 +62,9 @@ window.renderChart = function (canvas, params) {
           formatter: params.formatDataLabel,
           align: 'top',
           anchor: 'end',
+          font: {
+            size: 14,
+          },
         },
         dragData: {
           onDrag: (event, datasetIndex, index, value) => {

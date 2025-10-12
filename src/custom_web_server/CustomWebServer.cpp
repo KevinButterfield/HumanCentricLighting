@@ -41,8 +41,12 @@ void CustomWebServer::StartServer()
 
   SetupKeyframesApi(server);
   SetupCurrentTimeApi(server);
-  server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
-
+  server
+      .serveStatic("/", LittleFS, "/")
+      .setDefaultFile("index.html")
+      .setCacheControl("no-cache, no-store, must-revalidate")
+      .setLastModified(true);
+  
   DefaultHeaders::Instance().addHeader(F("Access-Control-Allow-Origin"), F("*"));
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "Content-Type");
