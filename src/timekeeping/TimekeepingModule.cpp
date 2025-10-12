@@ -1,5 +1,4 @@
 #include "TimekeepingModule.h"
-#include "../custom_debug_utils/BlinkingLight.h"
 #include <Arduino.h>
 #include <WiFi.h>
 #include <ArduinoLog.h>
@@ -66,7 +65,6 @@ void TimekeepingModule::syncRTCIfWifiSyncComplete() {
     }
 
     timeState = TIME_SET;
-    BlinkingLight::Toggle(true);
   }
 }
 
@@ -90,6 +88,5 @@ bool TimekeepingModule::setSystemTimeFromRTC() {
              timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
 
   timeState = TIME_SET;
-  BlinkingLight::Toggle(true);
   return true;
 }
