@@ -43,6 +43,4 @@ void CustomWebServer::StartServer()
   server.begin();
 
   Log.infoln(F("[Web] Server started at http://%s:%d"), WiFi.localIP().toString().c_str(), 80);
-
-  vTaskDelay(portMAX_DELAY);
 }

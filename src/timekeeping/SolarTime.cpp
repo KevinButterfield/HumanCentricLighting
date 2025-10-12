@@ -8,6 +8,7 @@ constexpr double LONGITUDE = -86.1480;
 
 float calculateCurrentFraction(const tm& timeinfo, const double sunriseHours, const double sunsetHours) {
   double currentTimeHours = timeinfo.tm_hour + timeinfo.tm_min / 60.0 + timeinfo.tm_sec / 3600.0;
+  Log.verbose("currentTimeHours %F sunriseHours %F sunsetHours %F; ", currentTimeHours, sunriseHours, sunsetHours);
 
   if (currentTimeHours < sunriseHours) {
     return 0.0;

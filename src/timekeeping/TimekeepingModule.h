@@ -7,8 +7,10 @@ public:
     TimekeepingModule() = default;
 
     bool begin();
-    void update();
+    bool haveTime();
     DateTime now();
+
+    void update();
 
 private:
     enum TimeState { TIME_NONE, TIME_PENDING, TIME_SET };

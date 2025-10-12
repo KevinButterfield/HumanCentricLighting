@@ -17,11 +17,12 @@ void ServerTask(void *parameter)
   CustomWebServer::ConnectToWiFi();
   CustomWebServer::StartServer();
 
-  while (true)
-  {
+  while(!timekeeping.haveTime()) {
     timekeeping.update();
-    vTaskDelay(pdMS_TO_TICKS(250));
+    vTaskDelay(pdMS_TO_TICKS(500));
   }
+
+  vTaskDelay(portMAX_DELAY);
 }
 
 void setup()

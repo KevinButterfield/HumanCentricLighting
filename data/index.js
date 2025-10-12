@@ -54,7 +54,7 @@ function renderCharts() {
 
     window.renderChart(document.getElementById('brightness-chart'), {
       buildData: () => keyframes.map(kf => ({ x: kf.fractionOfSolarDay, y: kf.brightness })),
-      minValue: 0,
+      minValue: 0.25,
       maxValue: 1,
       formatDataLabel: (value) => Math.round(value.y * 100) + '%',
       onValueChanged: (index, value) => keyframes[index].brightness = value.y,

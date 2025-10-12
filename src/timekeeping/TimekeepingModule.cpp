@@ -4,8 +4,6 @@
 #include <WiFi.h>
 #include <ArduinoLog.h>
 
-const char* const TZ_INFO = "EST5EDT,M3.2.0,M11.1.0";
-
 bool TimekeepingModule::begin() {
   this->rtcConnected = rtc.begin();
 
@@ -26,6 +24,10 @@ DateTime TimekeepingModule::now() {
   return DateTime(now);
 }
 
+bool TimekeepingModule::haveTime() {
+  return timeState == TIME_SET;
+}
+
 void TimekeepingModule::update() {
   switch (timeState) {
     case TIME_NONE:
@@ -44,7 +46,7 @@ void TimekeepingModule::update() {
 void TimekeepingModule::startWifiTimeSyncIfConnected() {
   if (WiFi.status() == WL_CONNECTED) {
     Log.noticeln(F("Starting NTP time sync..."));
-    configTzTime(TZ_INFO, "pool.ntp.org", "time.nist.gov");
+    configTzTime("UTC", "pool.ntp.org", "time.nist.gov");
     timeState = TIME_PENDING;
   }
 }
@@ -52,7 +54,7 @@ void TimekeepingModule::startWifiTimeSyncIfConnected() {
 void TimekeepingModule::syncRTCIfWifiSyncComplete() {
   struct tm timeinfo;
   if (getLocalTime(&timeinfo)) {
-    Log.noticeln(F("NTP time received: %d-%d-%d %d:%d:%d"),
+    Log.noticeln(F("NTP time received: %d-%d-%d %d:%d:%d (UTC)"),
                timeinfo.tm_year + 1900, timeinfo.tm_mon + 1, timeinfo.tm_mday,
                timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
 
@@ -83,7 +85,7 @@ bool TimekeepingModule::setSystemTimeFromRTC() {
   struct timeval tv = {.tv_sec = t};
   settimeofday(&tv, NULL);
 
-  Log.noticeln(F("RTC time set: %d-%d-%d %d:%d:%d"),
+  Log.noticeln(F("RTC time set: %d-%d-%d %d:%d:%d (UTC)"),
              timeinfo.tm_year + 1900, timeinfo.tm_mon + 1, timeinfo.tm_mday,
              timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
 
