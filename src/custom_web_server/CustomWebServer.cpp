@@ -5,6 +5,7 @@
 #include <ArduinoLog.h>
 #include <LittleFS.h>
 #include <WiFi.h>
+#include <ESPmDNS.h>
 
 const char *const TASK_NAME = "WebServerTask";
 const int STACK_SIZE_BYTES = 8192;
@@ -31,6 +32,11 @@ void CustomWebServer::StartServer()
   {
     Log.verboseln(F("[Web] Waiting for WiFi connection..."));
     vTaskDelay(pdMS_TO_TICKS(250));
+  }
+
+  if (!MDNS.begin("HumanCentricLighting"))
+  {
+    Log.errorln("[Web] Failed to start MDNS service");
   }
 
   SetupKeyframesApi(server);
