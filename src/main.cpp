@@ -2,7 +2,6 @@
 #include <ArduinoLog.h>
 #include <WiFi.h>
 
-#include "custom_debug_utils/BlinkingLight.h"
 #include "input/ManualInputModule.h"
 #include "input/TimeInputModule.h"
 #include "output/OutputModule.h"
