@@ -1,4 +1,22 @@
+body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.chart-title {
+  grid-row: 1;
+  text-align: center;
+}
+
 .chart-container {
   position: relative;
-  width: min(95vw, 1024px)
+  grid-row: 2;
+}
+
+@media (max-width: 768px) {
+  body {
+    display: flex;
+    flex-direction: column;
+  }
 }
