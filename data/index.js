@@ -51,6 +51,7 @@ function renderCharts() {
       maxValue: 6500,
       formatDataLabel: (value) => Math.round(value.y) + 'K',
       onValueChanged: (index, value) => keyframes[index].colorTemperature = Math.round(value.y),
+      backgroundColor: (...args) => window.buildGradient(...args),
     }),
 
     window.renderChart(document.getElementById('brightness-chart'), {

@@ -1,3 +1,8 @@
+const backgroundFill = (params, canvas) => params.backgroundColor && {
+  fill: true,
+  backgroundColor: (context) => params.backgroundColor(canvas, context.dataset.data),
+};
+
 window.renderChart = function (canvas, params) {
   const chart = new Chart(canvas, {
     type: 'line',
@@ -15,6 +20,7 @@ window.renderChart = function (canvas, params) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      ...backgroundFill(params, canvas),
       layout: {
         padding: {
           top: 40,
