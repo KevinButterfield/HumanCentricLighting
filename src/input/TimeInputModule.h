@@ -10,7 +10,8 @@ struct Keyframe
   int colorTemperature;
 };
 
-constexpr int KEYFRAME_COUNT = 11;
+const float KEYFRAMES[] = { -0.1, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1 };
+constexpr int KEYFRAME_COUNT = sizeof(KEYFRAMES) / sizeof(KEYFRAMES[0]);
 
 namespace TimeInputModule
 {

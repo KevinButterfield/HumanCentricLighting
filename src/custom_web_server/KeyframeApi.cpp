@@ -37,13 +37,13 @@ void postKeyframes(AsyncWebServerRequest *request, uint8_t *data, size_t len, si
   auto error = deserializeJson(json, body);
   keyframes = json.as<JsonArray>();
 
-  if (error || !json.is<JsonArray>() || keyframes.size() != 11)
+  if (error || !json.is<JsonArray>() || keyframes.size() != KEYFRAME_COUNT)
   {
     request->send(422, F("text/plain"), error ? error.c_str() : "Not an array");
     return;
   }
   else
-    for (int i = 0; i < 11; ++i)
+    for (int i = 0; i < KEYFRAME_COUNT; ++i)
     {
       auto validationError = TimeInputModule::ValidateKeyframe(keyframes[i]);
 

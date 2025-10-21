@@ -5,7 +5,7 @@
 #include <sstream>
 #include <math.h>
 
-constexpr int CURRENT_KEYFRAME_SCHEMA_VERSION = 3;
+constexpr int CURRENT_KEYFRAME_SCHEMA_VERSION = 4;
 
 Keyframe currentKeyframes[KEYFRAME_COUNT];
 
@@ -46,7 +46,7 @@ void setCurrentToSinWaveDefault()
 {
   for (int i = 0; i < KEYFRAME_COUNT; ++i)
   {
-    float fractionOfSolarDay = (float)i / (KEYFRAME_COUNT - 1);
+    float fractionOfSolarDay = KEYFRAMES[i];
     currentKeyframes[i].fractionOfSolarDay = fractionOfSolarDay;
     currentKeyframes[i].colorTemperature = defaultModifier(fractionOfSolarDay, 2700, 6500);
     currentKeyframes[i].brightness = defaultModifier(fractionOfSolarDay, .25, 1);
@@ -102,9 +102,9 @@ void TimeInputModule::Initialize()
   prefs.end();
 }
 
-bool validateFraction(JsonVariant value, float min)
+bool validateFraction(JsonVariant value, float min, float max)
 {
-  return value.is<float>() && value.as<float>() >= min && value.as<float>() <= 1;
+  return value.is<float>() && value.as<float>() >= min && value.as<float>() <= max;
 }
 
 bool validateColorTemp(JsonVariant value)
@@ -114,9 +114,9 @@ bool validateColorTemp(JsonVariant value)
 
 String TimeInputModule::ValidateKeyframe(const JsonObject json)
 {
-  bool fractionGood = validateFraction(json["fractionOfSolarDay"], 0);
+  bool fractionGood = validateFraction(json["fractionOfSolarDay"], -0.1, 1.1);
   bool colorTempGood = validateColorTemp(json["colorTemperature"]);
-  bool brightnessGood = validateFraction(json["brightness"], 0.25);
+  bool brightnessGood = validateFraction(json["brightness"], 0.25, 1);
   std::stringstream errors;
 
   if (!fractionGood)

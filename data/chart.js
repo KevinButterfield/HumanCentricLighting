@@ -53,8 +53,8 @@ window.renderChart = function (canvas, params) {
               type: 'line',
               borderColor: 'black',
               borderWidth: 2,
-              xMin: currentSolarTime.currentFraction * 10,
-              xMax: currentSolarTime.currentFraction * 10,
+              xMin: currentSolarTime.currentFraction * 10 + 1,
+              xMax: currentSolarTime.currentFraction * 10 + 1,
             }
           },
         },
