@@ -5,7 +5,7 @@
 #include <RTClib.h>
 
 const int WARM_CHANNEL = 0;
-const int WARM_PIN = 25;
+const int WARM_PIN = 32;
 
 const int COOL_CHANNEL = 1;
 const int COOL_PIN = 26;

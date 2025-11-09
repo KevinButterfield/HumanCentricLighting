@@ -2,7 +2,6 @@
 #include <ArduinoLog.h>
 #include <WiFi.h>
 
-#include "input/ManualInputModule.h"
 #include "input/TimeInputModule.h"
 #include "output/OutputModule.h"
 #include "timekeeping/TimekeepingModule.h"
@@ -28,7 +27,6 @@ void setup()
 {
   Serial.begin(115200);
   Log.begin(LOG_LEVEL_VERBOSE, &Serial, true);
-  ManualInputModule::Initialize();
   TimeInputModule::Initialize();
   OutputModule::Initialize();
   timekeeping.begin();
